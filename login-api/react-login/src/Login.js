@@ -13,6 +13,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import loginpic from './img/Log-regi-pic.jpg';
+import axios from 'axios';
 
 function Copyright(props) {
   return (
@@ -38,42 +39,32 @@ export default function SignInSide() {
     const data = new FormData(event.currentTarget);
     
     const jsonData = {
-        email: data.get('email'),
-        password: data.get('password'),
-    }
-
-    fetch("http://localhost:3333/login", {
-      method: "POST", 
+      email: data.get('email'),
+      password: data.get('password'),
+    };
+  
+    axios.post("http://localhost:3333/login", jsonData, {
       headers: {
         "Content-Type": "application/json",
-      },
-      body: JSON.stringify(jsonData),
+      }
     })
-
-    .then(response => response.json())
-    .then(data => {
-        console.log("Success:", data);
-      
-
-        if (data.status === 'ok'){
-            //alert('Login Success')
-            localStorage.setItem('token', data.token); 
-            localStorage.setItem('userId', data.userId);
-            if(jsonData.email == 'admin@admin.com'){
-              window.location = '/manageproduct'
-            }
-            else{
-              window.location = '/home'
-            }
-            
-            
-        }else{
-            alert('Login Failed')
-            window.location = '/'
+    .then(response => {
+      console.log("Success:", response.data);
+      if (response.data.status === 'ok'){
+        localStorage.setItem('token', response.data.token); 
+        localStorage.setItem('userId', response.data.userId);
+        if (jsonData.email === 'admin@admin.com'){
+          window.location = '/manageproduct';
+        } else {
+          window.location = '/home';
         }
+      } else {
+        alert('Login Failed');
+        window.location = '/';
+      }
     })
-    .catch((error) => {
-        console.error('Error : ',error);
+    .catch(error => {
+      console.error('Error:', error);
     });
   };
 

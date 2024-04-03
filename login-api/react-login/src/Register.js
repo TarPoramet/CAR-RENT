@@ -12,6 +12,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import axios from 'axios';
 
 function Copyright(props) {
   return (
@@ -40,28 +41,24 @@ export default function SignUp() {
       firstname: data.get('firstName'),
       lastname: data.get('lastName')
     };
-    fetch("http://localhost:3333/register", {
-      method: "POST", 
+  
+    axios.post("http://localhost:3333/register", jsonData, {
       headers: {
         "Content-Type": "application/json",
-      },
-      body: JSON.stringify(jsonData),
+      }
     })
-
-    .then(response => response.json())
-    .then(data => {
-        console.log("Success:", data);
-        if (data.status === 'ok'){
-            alert('register Success')
-            localStorage.setItem('token', data.token);
-            window.location = '/login'
-            
-        }else{
-            alert('Login Failed')
-        }
+    .then(response => {
+      console.log("Success:", response.data);
+      if (response.data.status === 'ok'){
+        alert('Register Success');
+        localStorage.setItem('token', response.data.token);
+        window.location = '/login';
+      } else {
+        alert('Register Failed');
+      }
     })
-    .catch((error) => {
-        console.error('Error : ',error);
+    .catch(error => {
+      console.error('Error:', error);
     });
   };
 
