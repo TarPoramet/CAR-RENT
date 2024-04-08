@@ -34,7 +34,7 @@ function Insertproduct() {
     formData.append("price", addPrice);
     formData.append('file', file);
 
-    axios.post('http://localhost:3333/insertproduct', formData)
+    axios.post(process.env.REACT_APP_API +'/insertproduct', formData)
       .then((response) => {
         console.log(response);
         if (response.data.status === 'ok') {

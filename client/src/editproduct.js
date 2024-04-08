@@ -14,6 +14,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useParams } from 'react-router-dom';
+import Swal from 'sweetalert2'
 
 const defaultTheme = createTheme();
 
@@ -26,14 +27,23 @@ function Insertproduct() {
   
     const handleUpload = async (e) => {
       e.preventDefault();
-      if (!file || !productName || !addPrice) return; // Corrected variable name
+      if (!file || !productName || !addPrice) {
+        Swal.fire({
+          title: "Error",
+          text: "Please fill in all fields",
+          icon: "error",
+          confirmButtonText: 'OK'
+        });
+        return;
+
+      } // Corrected variable name // Corrected variable name
   
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = async () => {
         const base64Data = reader.result.split(',')[1];
         try {
-          await axios.post(`http://localhost:3333/updateproduct/${id}`, { 
+          await axios.post(process.env.REACT_APP_API +`/updateproduct/${id}`, { 
             productName: productName,
             price: addPrice,
             imageData: base64Data

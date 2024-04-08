@@ -12,11 +12,12 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import Link from '@mui/material/Link';
+//import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import topleftImage from './img/topleft.jpg';
 import axios from 'axios';
-
+import Swal from 'sweetalert2'
+import { Link } from 'react-router-dom';
 function Copyright() {
   return (
     <Typography variant="body2" color="text.secondary" align="center">
@@ -39,62 +40,11 @@ export default function Album() {
 
   const [products, setProducts] = useState([]);
 
-  // useEffect(() => {
-  //   // Authentication check
-  //   const token = localStorage.getItem('token');
-  //   if (!token) {
-  //     alert('Authentication failed. Redirecting to login.');
-  //     window.location = '/';
-  //     return;
-  //   }
-  //   // if (email != 'admin@admin.com'){
-  //   //   alert('Authentication failed. Redirecting to login.');
-  //   //   window.location = '/home';
-  //   //   return;
-  //   // }
 
-  //   // Fetch authentication status
-  //   fetch("http://localhost:3333/authen", {
-  //     method: "POST",
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'Authorization': 'Bearer ' + token
-  //     },
-  //   })
-  //     .then(response => response.json())
-  //     .then(data => {
-  //       console.log("Authentication Response:", data);
-  //       if (data.status === 'ok') {
-  //         // Authentication success, proceed to fetch product data
-  //         fetch("http://localhost:3333/showproduct", {
-  //           method: "POST",
-  //           headers: {
-  //             'Content-Type': 'application/json',
-  //             'Authorization': 'Bearer ' + token
-  //           },
-  //         })
-  //           .then(response => response.json())
-  //           .then(productData => {
-  //             console.log("Product Data:", productData);
-  //             setProducts(productData.products);
-  //           })
-  //           .catch(error => {
-  //             console.error('Error fetching product data:', error);
-  //           });
-  //       } else {
-  //         alert('Authentication failed. Redirecting to login.');
-  //         localStorage.removeItem('token');
-  //         window.location = '/';
-  //       }
-  //     })
-  //     .catch(error => {
-  //       console.error('Authentication Error:', error);
-  //     });
-  // }, []);
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get('http://localhost:3333/showproducts'); // เรียก API Endpoint ที่ดึงข้อมูลสินค้า
+        const response = await axios.get(process.env.REACT_APP_API +'/showproducts'); // เรียก API Endpoint ที่ดึงข้อมูลสินค้า
         setProducts(response.data); // ตั้งค่า state ของสินค้าด้วยข้อมูลที่ได้รับ
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -113,24 +63,44 @@ export default function Album() {
   };
 
   const ProductDelete = (id) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this product?");
-    if (confirmDelete) {
-      axios.delete(`http://localhost:3333/deleteproduct/${id}`)
-        .then(response => {
-          console.log("Delete Response:", response.data);
-          if (response.data.status === 'ok') {
-            alert("Product Successfully Deleted");
-            window.location = '/manageproduct';
-          } else {
-            alert("Error deleting product787878");
-          }
-        })
-        .catch(error => {
-          console.error('Error deleting product5678:', error);
-        });
-    };
+    Swal.fire({
+      title: "Confirm Delete",
+      text: "Do you want to delete",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, Confirm !"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios.delete(process.env.REACT_APP_API +`/deleteproduct/${id}`)
+          .then(response => {
+            console.log("Delete Response:", response.data);
+            if (response.data.status === 'ok') {
+              Swal.fire({
+                title: "Success",
+                icon: "success",
+                confirmButtonText: 'OK'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  window.location = '/manageproduct';
+                }
+              });
+
+            } else {
+              alert("Error deleting product787878");
+            }
+
+          })
+          .catch(error => {
+            console.error('Error deleting product5678:', error);
+          });
+
+      }
+    });
+    
   }
-  
+
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -138,14 +108,14 @@ export default function Album() {
       <AppBar position="relative" style={{ backgroundColor: "white" }} >
         <Toolbar>
           {/* <CameraIcon sx={{ mr: 2 }} /> */}
-          <img
-            src={topleftImage}
-
-            style={{ marginRight: '2px', width: '50px', height: '50px' }}
-          />
-          <Typography variant="h6" color="black" noWrap style={{ marginLeft: '10px' }}>
-            <b>CAR RENT</b>
-          </Typography>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+              <Link to="/manageproduct">
+                <img src={topleftImage} style={{ marginRight: '2px', width: '50px', height: '50px' }} alt="Logo" />
+              </Link>
+              <Typography variant="h6" color="black" noWrap style={{ marginLeft: '10px' }}>
+                <b>CAR RENT</b>
+              </Typography>
+            </div>
 
           <Button variant="contained" color='error' onClick={handleLogout} style={{ marginLeft: 'auto' }}>
             Log out

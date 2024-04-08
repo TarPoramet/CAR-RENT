@@ -14,6 +14,7 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import loginpic from './img/Log-regi-pic.jpg';
 import axios from 'axios';
+import Swal from 'sweetalert2'
 
 function Copyright(props) {
   return (
@@ -36,14 +37,14 @@ export default function SignInSide() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
     
+    const data = new FormData(event.currentTarget);
     const jsonData = {
       email: data.get('email'),
       password: data.get('password'),
     };
   
-    axios.post("http://localhost:3333/login", jsonData, {
+    axios.post(process.env.REACT_APP_API+"/login", jsonData, {
       headers: {
         "Content-Type": "application/json",
       }
@@ -53,19 +54,39 @@ export default function SignInSide() {
       if (response.data.status === 'ok'){
         localStorage.setItem('token', response.data.token); 
         localStorage.setItem('userId', response.data.userId);
-        if (jsonData.email === 'admin@admin.com'){
-          window.location = '/manageproduct';
-        } else {
-          window.location = '/home';
-        }
+        Swal.fire({
+          title: "Success",
+          icon: "success",
+          confirmButtonText: 'OK'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            if (jsonData.email === 'admin@admin.com') {
+              window.location = '/manageproduct';
+            } else {
+              window.location = '/home';
+            }
+          }
+        });
+        
       } else {
-        alert('Login Failed');
-        window.location = '/';
+        Swal.fire({
+          title: "Login Failed",
+          icon: "error",
+          confirmButtonText: 'OK'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location = '/';
+          }
+        });
+        
+        
       }
     })
+    
     .catch(error => {
       console.error('Error:', error);
     });
+    
   };
 
   return (

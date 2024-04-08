@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import Swal from 'sweetalert2'
 
 
 import topleftImage from './img/topleft.jpg';
@@ -19,7 +20,7 @@ function Cardetail() {
   const userId = localStorage.getItem('userId');
 
   useEffect(() => {
-    axios.get(`http://localhost:3333/showproductfromid/${id}`)
+    axios.get(process.env.REACT_APP_API +`/showproductfromid/${id}`)
       .then(response => {
         setProduct(response.data);
       })
@@ -39,18 +40,36 @@ function Cardetail() {
   const handleSubmit = async (e) => {
     // e.preventDefault();
     if (totalprice === 0) {
-      alert("Choose Day")
+      // alert("Choose Day")
+      Swal.fire({
+        title: "Choose Day !!!",
+        text : "please choose day",
+        icon: "error",
+        confirmButtonText: 'OK'
+      })
     }
     else{
       try {
-        await axios.post('http://localhost:3333/upbooking', { 
+        await axios.post(process.env.REACT_APP_API +'/upbooking', { 
           quantity: quantity,
           totalprice: totalprice,
           car_id: id,
           user_id: userId
         });
-        alert('Upload success!');
-        window.location = '/home';
+        Swal.fire({
+          title: "Confirm Booking",
+          text : "Booking car   "+ product.product_name + " for  "+ quantity +"  Day",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, Confirm !"
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location = '/home';
+          }
+        });
+
       } catch (error) {
         console.error('Upload failed:', error);
       }
@@ -62,38 +81,7 @@ function Cardetail() {
     localStorage.removeItem('userId');
     window.location = '/login';
   };
-  // return (
-  //   <div>
-  //     {product && (
-  //       <div>
-  //         <div><img src={`data:image/png;base64, ${product.img}`} alt="Product" /></div>
-  //         <div>{product.product_name}</div>
-  //         {/* <div>{product.price}</div> */}
-  //         <div>
-  //           <label>Day:</label>
-  //           <select value={quantity} onChange={handlePriceChange}>
-  //             <option value={0}>-</option>
-  //             <option value={1}>1</option>
-  //             <option value={2}>2</option>
-  //             <option value={3}>3</option>
-  //             <option value={4}>4</option>
-  //             <option value={5}>5</option>
-  //             <option value={6}>6</option>
-  //             <option value={7}>7</option>
-  //             <option value={8}>8</option>
-  //             <option value={9}>9</option>
-  //             <option value={10}>10</option>
-  //           </select>
-  //         </div>
-  //         <div>Total Price: {product.price * quantity}</div>
-  //         <Button size="small" variant="contained" color="success" onClick={() => handleSubmit()}>
-  //           Book !!!
-  //         </Button>
 
-  //       </div>
-  //     )}
-  //   </div>
-  // );
   return (
     <>
       <AppBar position="fixed" style={{ backgroundColor: 'white' }}>
@@ -109,7 +97,7 @@ function Cardetail() {
           </Button>
         </Toolbar>
       </AppBar>
-      
+      <main style={{ marginTop: '20px'}}>
         {product && (
           <div style={{ border: '1px ', borderRadius: '5px', padding: '20px', backgroundColor: 'white' }}>
             <div style={{ textAlign: 'center', marginTop:"100px"}}>
@@ -119,7 +107,7 @@ function Cardetail() {
               {product.product_name}
             </div>
             <div style={{ marginBottom: '10px', textAlign: 'center', fontSize: '1.2em', fontWeight: 'bold' }}>
-              <label>Day: </label>
+              <label>Rent:</label>
               <select value={quantity} onChange={handlePriceChange} style={{ fontSize: '20px', fontWeight: 'bold' }}>
                 <option value={0}>-</option>
                 <option value={1}>1</option>
@@ -133,8 +121,9 @@ function Cardetail() {
                 <option value={9}>9</option>
                 <option value={10}>10</option>
               </select>
+              <label>   Day </label>
             </div>
-            <div style={{ textAlign: 'center', fontSize: '1.2em', fontWeight: 'bold', marginBottom: '10px' }}>
+            <div style={{ textAlign: 'center', fontSize: '1.2em', fontWeight: 'bold', marginBottom: '10px' ,color:'red'}}>
               Total Price: {product.price * quantity}
             </div>
             <div style={{ textAlign: 'center' }}>
@@ -143,8 +132,9 @@ function Cardetail() {
               </Button>
             </div>
           </div>
+         
         )}
-      
+       </main>
     </>
   );
   

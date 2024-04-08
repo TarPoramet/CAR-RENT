@@ -14,8 +14,8 @@ import Editproduct from './editproduct.js'
 
 import Insert_new from './insert_new.js'
 import Showproduct_new from './showproduct_new.js'
-import Car_detail from './car_detail.js';
-
+import Car_detail from './car_detail.js'
+import History from './history.js'
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter>
@@ -33,6 +33,7 @@ root.render(
       <Route path="/insert_new" element={<Insert_new />} />
       <Route path="/showproduct_new" element={<Showproduct_new />} />
       <Route path="/car_detail/:id" element={<Car_detail />} />
+      <Route path="/history" element={<History />} />
 
     </Routes>
   </BrowserRouter>

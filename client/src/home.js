@@ -27,7 +27,7 @@ function Album() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get('http://localhost:3333/showproducts');
+        const response = await axios.get(process.env.REACT_APP_API +'/showproducts');
         setProducts(response.data);
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -44,6 +44,9 @@ function Album() {
   };
   const Cardetail = (id) => {
     window.location = '/car_detail/' + id;
+  }
+  const Historygo = () =>{
+    window.location = '/history'
   }
 
 
@@ -62,7 +65,7 @@ function Album() {
               </Typography>
             </div>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <Button variant="text" style={{ marginRight: '10px' }}>History</Button>
+              <Button variant="text" style={{ marginRight: '10px' }} onClick={Historygo}>History</Button>
               <Button variant="contained" color='error' onClick={handleLogout}>Log out</Button>
             </div>
           </Toolbar>

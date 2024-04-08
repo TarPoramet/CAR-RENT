@@ -42,7 +42,7 @@ export default function SignUp() {
       lastname: data.get('lastName')
     };
   
-    axios.post("http://localhost:3333/register", jsonData, {
+    axios.post(process.env.REACT_APP_API +"/register", jsonData, {
       headers: {
         "Content-Type": "application/json",
       }

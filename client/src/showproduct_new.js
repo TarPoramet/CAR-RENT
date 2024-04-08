@@ -7,7 +7,7 @@ const ProductWithImage = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get('http://localhost:3333/showproducts'); // เรียก API Endpoint ที่ดึงข้อมูลสินค้า
+        const response = await axios.get(process.env.REACT_APP_API +'/showproducts'); // เรียก API Endpoint ที่ดึงข้อมูลสินค้า
         setProducts(response.data); // ตั้งค่า state ของสินค้าด้วยข้อมูลที่ได้รับ
       } catch (error) {
         console.error('Error fetching products:', error);

@@ -15,6 +15,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Swal from 'sweetalert2'
 
 const defaultTheme = createTheme();
 
@@ -25,20 +26,36 @@ function Insertproduct() {
   
     const handleUpload = async (e) => {
       e.preventDefault();
-      if (!file || !productName || !addPrice) return; // Corrected variable name
+      if (!file || !productName || !addPrice) {
+        Swal.fire({
+          title: "Error",
+          text: "Please fill in all fields",
+          icon: "error",
+          confirmButtonText: 'OK'
+        });
+        return;
+
+      } // Corrected variable name
   
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = async () => {
         const base64Data = reader.result.split(',')[1];
         try {
-          await axios.post('http://localhost:3333/uploadnew', { 
+          await axios.post(process.env.REACT_APP_API +'/uploadnew', { 
             productName: productName,
             price: addPrice,
             imageData: base64Data
           });
-          alert('Upload success!');
-          window.location = '/manageproduct';
+          Swal.fire({
+            title: "Success",
+            icon: "success",
+            confirmButtonText: 'OK'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location = '/manageproduct';
+            }
+          });
         } catch (error) {
           console.error('Upload failed:', error);
         }
