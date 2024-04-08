@@ -81,20 +81,26 @@ function Cardetail() {
     localStorage.removeItem('userId');
     window.location = '/login';
   };
+  const Historygo = () => {
+    window.location = '/history'
+  }
 
   return (
     <>
       <AppBar position="fixed" style={{ backgroundColor: 'white' }}>
-        <Toolbar >
-          <Link to="/home" >
-            <img src={topleftImage} style={{ marginRight: '2px', width: '50px', height: '50px' }} alt="Logo" />
-          </Link>
-          <Typography variant="h6" color="black" noWrap style={{ marginLeft: '10px' }}>
-            <b>CAR RENT</b>
-          </Typography>
-          <Button variant="contained" color='error' onClick={handleLogout} style={{ marginLeft: 'auto' }}>
-            Log out
-          </Button>
+        <Toolbar style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <Link to="/home">
+              <img src={topleftImage} style={{ marginRight: '2px', width: '50px', height: '50px' }} alt="Logo" />
+            </Link>
+            <Typography variant="h6" color="black" noWrap style={{ marginLeft: '10px' }}>
+              <b>CAR RENT</b>
+            </Typography>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <Button variant="text" style={{ marginRight: '10px' }} onClick={Historygo}>History</Button>
+            <Button variant="contained" color='error' onClick={handleLogout}>Log out</Button>
+          </div>
         </Toolbar>
       </AppBar>
       <main style={{ marginTop: '20px'}}>
@@ -124,7 +130,7 @@ function Cardetail() {
               <label>   Day </label>
             </div>
             <div style={{ textAlign: 'center', fontSize: '1.2em', fontWeight: 'bold', marginBottom: '10px' ,color:'red'}}>
-              Total Price: {product.price * quantity}
+              Total Price: {(product.price * quantity).toLocaleString()}
             </div>
             <div style={{ textAlign: 'center' }}>
               <Button size="small" variant="contained" color="success" onClick={() => handleSubmit()}>

@@ -44,14 +44,7 @@ function History() {
     window.location = '/history'
   }
 
-  const handleClick = () => {
-    Swal.fire({
-      title: 'ESUS!',
-      text: 'Do you want to asshold',
-      icon: 'error',
-      confirmButtonText: 'Cooy'
-    })
-  }
+  
 
   return (
     <div>
@@ -96,7 +89,7 @@ function History() {
                   </TableCell>
 
                   <TableCell align="center">{item.quantity}</TableCell>
-                  <TableCell align="center">{item.totalprice}</TableCell>
+                  <TableCell align="center">{item.totalprice.toLocaleString()}</TableCell>
                   <TableCell align="center">{item.car_id}</TableCell>
                 </TableRow>
               ))}

@@ -192,51 +192,66 @@ app.post('/insertproduct', upload.single('file'), function (req, res, next) {
 //     });
 // });
 
-app.delete('/deleteproduct/:id', function (req, res, next) {
+// app.delete('/deleteproduct/:id', function (req, res, next) {
+//   const productId = req.params.id;
+
+//   connection.query('DELETE FROM product_new WHERE product_id = ?', [productId], function (error, results, fields) {
+//     if (error) {
+//       res.json({ status: 'error', message: error });
+//       return;
+//     }
+
+//     console.log('Delete result:', results);
+
+//     if (results.affectedRows > 0) {
+//       res.json({ status: 'ok', message: 'Product deleted successfully.' });
+//     } else {
+//       res.json({ status: 'error', message: 'Product not found or already deleted.' });
+//     }
+//   });
+// });
+
+app.delete('/deleteproduct/:id', async(req, res)=>{
   const productId = req.params.id;
+  try {
+    const query = 'DELETE FROM product_new WHERE product_id = ?'
+    await connection.query(query, [productId]);
+    
+    
+    res.status(201).json({ status: 'ok'});
+  }
+  catch (err) {
+    console.error('Error', err);
+    res.status(500).send('Internal Server Error');
+  }
+})
 
-  connection.query('DELETE FROM product_new WHERE product_id = ?', [productId], function (error, results, fields) {
-    if (error) {
-      res.json({ status: 'error', message: error });
-      return;
-    }
+// app.post('/productdetail/:id', function (req, res, next) {
+//   const productId = req.params.id;
 
-    console.log('Delete result:', results);
+//   connection.query('SELECT * FROM product_new WHERE product_id = ?', [productId], function (error, results, fields) {
+//     if (error) {
+//       res.json({ status: 'error', message: error });
+//       return;
+//     }
 
-    if (results.affectedRows > 0) {
-      res.json({ status: 'ok', message: 'Product deleted successfully.' });
-    } else {
-      res.json({ status: 'error', message: 'Product not found or already deleted.' });
-    }
-  });
-});
+//     console.log('Product Detail Results:', results);
 
-app.post('/productdetail/:id', function (req, res, next) {
-  const productId = req.params.id;
+//     if (results.length > 0) {
+//       const productDetail = {
+//         product_id: results[0].product_id,
+//         product_name: results[0].product_name,
+//         price: results[0].price,
+//         img: results[0].img
 
-  connection.query('SELECT * FROM product_new WHERE product_id = ?', [productId], function (error, results, fields) {
-    if (error) {
-      res.json({ status: 'error', message: error });
-      return;
-    }
+//       };
 
-    console.log('Product Detail Results:', results);
-
-    if (results.length > 0) {
-      const productDetail = {
-        product_id: results[0].product_id,
-        product_name: results[0].product_name,
-        price: results[0].price,
-        img: results[0].img
-
-      };
-
-      res.json({ status: 'ok', productDetail: productDetail });
-    } else {
-      res.json({ status: 'error', message: 'Product not found.' });
-    }
-  });
-});
+//       res.json({ status: 'ok', productDetail: productDetail });
+//     } else {
+//       res.json({ status: 'error', message: 'Product not found.' });
+//     }
+//   });
+// });
 
 // app.post('/updateproduct/:id', upload.single('file'), function (req, res, next) {
 //   const productId = req.params.id;
@@ -257,53 +272,75 @@ app.post('/productdetail/:id', function (req, res, next) {
 
 //------------------------------------new part -------------------------------------------------
 
-app.post('/uploadnew', (req, res) => {
-  const { productName, price, imageData } = req.body;
+// app.post('/uploadnew', (req, res) => {
+//   const { productName, price, imageData } = req.body;
 
-  const sql = 'INSERT INTO product_new (product_name, price, img) VALUES (?, ?, ?)';
+//   const sql = 'INSERT INTO product_new (product_name, price, img) VALUES (?, ?, ?)';
   
-  connection.query(sql, [productName, price, imageData], (err, result) => {
-    if (err) {
-      console.error('Error uploading :', err);
-      res.status(500).json({ error: 'Failed to upload ' });
-      return;
-    }
-    console.log('uploaded successfully');
-    res.status(200).json({ message: 'uploaded successfully' });
-  })
+//   connection.query(sql, [productName, price, imageData], (err, result) => {
+//     if (err) {
+//       console.error('Error uploading :', err);
+//       res.status(500).json({ error: 'Failed to upload ' });
+//       return;
+//     }
+//     console.log('uploaded successfully');
+//     res.status(200).json({ message: 'uploaded successfully' });
+//   })
 
+// });
+app.post('/uploadnew', async (req, res) => {
+  const { productName, price, imageData } = req.body;
+ 
+  try {
+    const query = 'INSERT INTO product_new (product_name, price, img) VALUES (?, ?, ?)'
+    await connection.query(query, [productName, price, imageData]);
+
+    res.status(201).json({ status: 'ok'});
+  }
+  catch (err) {
+    console.error('Error', err);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
-app.post('/upbooking', (req, res) => {
+
+app.post('/upbooking', async (req, res) => {
   const { quantity, totalprice, car_id, user_id } = req.body;
-  const sql = 'INSERT INTO booking (quantity, totalprice, car_id, user_id) VALUES(?, ?, ?, ?)';
 
-  connection.query(sql, [quantity, totalprice, car_id, user_id], (err, result) => {
-    if (err) {
-      console.error('Error  :', err);
-      res.status(500).json({ error: 'Failed  ' });
-      return;
-    }
-    console.log('uploaded successfully');
-    res.status(200).json({ message: 'successfully' });
-  })
+  try {
+    const query = 'INSERT INTO booking (quantity, totalprice, car_id, user_id) VALUES(?, ?, ?, ?)'
+    await connection.query(query, [quantity, totalprice, car_id, user_id]);
+
+    res.status(201).json({ status: 'ok'});
+  }
+  catch (err) {
+    console.error('Error', err);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
-app.post('/updateproduct/:id', (req, res) => {
+app.post('/updateproduct/:id', async (req, res) => {
   const { productName, price, imageData } = req.body;
   const productId = req.params.id;
-  const sql = 'UPDATE product_new SET product_name = ?, price = ?, img = ? WHERE product_id = ?';
 
-  connection.query(sql, [productName, price, imageData, productId], (err, result) => {
-    if (err) {
-      console.error('Error uploading image:', err);
-      res.status(500).json({ error: 'Failed to upload image' });
-      return;
-    }
-    console.log('uploaded successfully');
-    res.status(200).json({ message: 'uploaded successfully' });
-  })
-
+  // connection.query(sql, [productName, price, imageData, productId], (err, result) => {
+  //   if (err) {
+  //     console.error('Error uploading image:', err);
+  //     res.status(500).json({ error: 'Failed to upload image' });
+  //     return;
+  //   }
+  //   console.log('uploaded successfully');
+  //   res.status(200).json({ message: 'uploaded successfully' });
+  // })
+  try {
+    const query = 'UPDATE product_new SET product_name = ?, price = ?, img = ? WHERE product_id = ?'
+    await connection.query(query, [productName, price, imageData, productId]);
+    res.status(201).json({ status: 'ok'});
+  }
+  catch (err) {
+    console.error('Error', err);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
 

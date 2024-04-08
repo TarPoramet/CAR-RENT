@@ -48,8 +48,15 @@ function Insertproduct() {
             price: addPrice,
             imageData: base64Data
           });
-          alert('Upload success!');
-          window.location = '/manageproduct';
+          Swal.fire({
+            title: "Success",
+            icon: "success",
+            confirmButtonText: 'OK'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location = '/manageproduct';
+            }
+          });
         } catch (error) {
           console.error('Upload failed:', error);
         }
